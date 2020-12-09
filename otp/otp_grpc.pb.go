@@ -18,6 +18,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OTPServicesClient interface {
 	GetOTP(ctx context.Context, in *GetOTPRequest, opts ...grpc.CallOption) (*GetOTPResponse, error)
+	VerifyOTP(ctx context.Context, in *VerifyOTPRequest, opts ...grpc.CallOption) (*VerifyOTPResponse, error)
 }
 
 type oTPServicesClient struct {
@@ -37,11 +38,21 @@ func (c *oTPServicesClient) GetOTP(ctx context.Context, in *GetOTPRequest, opts 
 	return out, nil
 }
 
+func (c *oTPServicesClient) VerifyOTP(ctx context.Context, in *VerifyOTPRequest, opts ...grpc.CallOption) (*VerifyOTPResponse, error) {
+	out := new(VerifyOTPResponse)
+	err := c.cc.Invoke(ctx, "/otp.OTPServices/VerifyOTP", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OTPServicesServer is the server API for OTPServices service.
 // All implementations must embed UnimplementedOTPServicesServer
 // for forward compatibility
 type OTPServicesServer interface {
 	GetOTP(context.Context, *GetOTPRequest) (*GetOTPResponse, error)
+	VerifyOTP(context.Context, *VerifyOTPRequest) (*VerifyOTPResponse, error)
 	mustEmbedUnimplementedOTPServicesServer()
 }
 
@@ -51,6 +62,9 @@ type UnimplementedOTPServicesServer struct {
 
 func (UnimplementedOTPServicesServer) GetOTP(context.Context, *GetOTPRequest) (*GetOTPResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetOTP not implemented")
+}
+func (UnimplementedOTPServicesServer) VerifyOTP(context.Context, *VerifyOTPRequest) (*VerifyOTPResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method VerifyOTP not implemented")
 }
 func (UnimplementedOTPServicesServer) mustEmbedUnimplementedOTPServicesServer() {}
 
@@ -83,6 +97,24 @@ func _OTPServices_GetOTP_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OTPServices_VerifyOTP_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VerifyOTPRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OTPServicesServer).VerifyOTP(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/otp.OTPServices/VerifyOTP",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OTPServicesServer).VerifyOTP(ctx, req.(*VerifyOTPRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OTPServices_ServiceDesc is the grpc.ServiceDesc for OTPServices service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -93,6 +125,10 @@ var OTPServices_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetOTP",
 			Handler:    _OTPServices_GetOTP_Handler,
+		},
+		{
+			MethodName: "VerifyOTP",
+			Handler:    _OTPServices_VerifyOTP_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
