@@ -18,9 +18,9 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserProfileClient interface {
 	// Register : will register user to the system
-	// input user object and password in metadata with key "SECRET"
-	// output RegisterResponse
-	Register(ctx context.Context, in *User, opts ...grpc.CallOption) (*RegisterResponse, error)
+	// input : RegisterRequest object and password in metadata with key "SECRET"
+	// output : RegisterResponse
+	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error)
 	// CheckCred : will check cred of a user
 	// input : CheckCredRequest and password in metadata with key "SECRET"
 	// output CheckCredResponse
@@ -39,7 +39,7 @@ func NewUserProfileClient(cc grpc.ClientConnInterface) UserProfileClient {
 	return &userProfileClient{cc}
 }
 
-func (c *userProfileClient) Register(ctx context.Context, in *User, opts ...grpc.CallOption) (*RegisterResponse, error) {
+func (c *userProfileClient) Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error) {
 	out := new(RegisterResponse)
 	err := c.cc.Invoke(ctx, "/userprofile.UserProfile/Register", in, out, opts...)
 	if err != nil {
@@ -71,9 +71,9 @@ func (c *userProfileClient) GetUser(ctx context.Context, in *GetUserRequest, opt
 // for forward compatibility
 type UserProfileServer interface {
 	// Register : will register user to the system
-	// input user object and password in metadata with key "SECRET"
-	// output RegisterResponse
-	Register(context.Context, *User) (*RegisterResponse, error)
+	// input : RegisterRequest object and password in metadata with key "SECRET"
+	// output : RegisterResponse
+	Register(context.Context, *RegisterRequest) (*RegisterResponse, error)
 	// CheckCred : will check cred of a user
 	// input : CheckCredRequest and password in metadata with key "SECRET"
 	// output CheckCredResponse
@@ -89,7 +89,7 @@ type UserProfileServer interface {
 type UnimplementedUserProfileServer struct {
 }
 
-func (UnimplementedUserProfileServer) Register(context.Context, *User) (*RegisterResponse, error) {
+func (UnimplementedUserProfileServer) Register(context.Context, *RegisterRequest) (*RegisterResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
 }
 func (UnimplementedUserProfileServer) CheckCred(context.Context, *CheckCredRequest) (*CheckCredResponse, error) {
@@ -112,7 +112,7 @@ func RegisterUserProfileServer(s grpc.ServiceRegistrar, srv UserProfileServer) {
 }
 
 func _UserProfile_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(User)
+	in := new(RegisterRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -124,7 +124,7 @@ func _UserProfile_Register_Handler(srv interface{}, ctx context.Context, dec fun
 		FullMethod: "/userprofile.UserProfile/Register",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserProfileServer).Register(ctx, req.(*User))
+		return srv.(UserProfileServer).Register(ctx, req.(*RegisterRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
