@@ -4,6 +4,7 @@ package userprofile
 
 import (
 	context "context"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -29,6 +30,30 @@ type UserProfileClient interface {
 	// input : GetUserRequest and JWT in metadata with key "JWT" {TODO: will be done after oauth service}
 	// output : GetUserResponse
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
+	// GetContacts : returns only contacts of a user
+	// input : Username
+	// output : GetContactsResponse
+	GetContacts(ctx context.Context, in *wrappers.StringValue, opts ...grpc.CallOption) (*GetContactsResponse, error)
+	// GetAddresses : returns only Addresses of a user
+	// input : Username
+	// output : GetAddressesResponse
+	GetAddresses(ctx context.Context, in *wrappers.StringValue, opts ...grpc.CallOption) (*GetAddressesResponse, error)
+	// GetPhotos : returns only Photos of a user
+	// input : Username
+	// output : GetPhotosResponse
+	GetPhotos(ctx context.Context, in *wrappers.StringValue, opts ...grpc.CallOption) (*GetPhotosResponse, error)
+	// UpdateContacts : returns only contacts of a user
+	// input : UpdateContactsRequest
+	// output : UpdateContactsResponse
+	UpdateContacts(ctx context.Context, in *wrappers.StringValue, opts ...grpc.CallOption) (*GetContactsResponse, error)
+	// UpdateAddresses : returns only Addresses of a user
+	// input : Addresses
+	// output : UpdateAddressesResponse
+	UpdateAddresses(ctx context.Context, in *Addresses, opts ...grpc.CallOption) (*GetAddressesResponse, error)
+	// UpdatePhotos : returns only Photos of a user
+	// input : Photos
+	// output : UpdatePhotosResponse
+	UpdatePhotos(ctx context.Context, in *Photos, opts ...grpc.CallOption) (*GetPhotosResponse, error)
 }
 
 type userProfileClient struct {
@@ -66,6 +91,60 @@ func (c *userProfileClient) GetUser(ctx context.Context, in *GetUserRequest, opt
 	return out, nil
 }
 
+func (c *userProfileClient) GetContacts(ctx context.Context, in *wrappers.StringValue, opts ...grpc.CallOption) (*GetContactsResponse, error) {
+	out := new(GetContactsResponse)
+	err := c.cc.Invoke(ctx, "/userprofile.UserProfile/GetContacts", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userProfileClient) GetAddresses(ctx context.Context, in *wrappers.StringValue, opts ...grpc.CallOption) (*GetAddressesResponse, error) {
+	out := new(GetAddressesResponse)
+	err := c.cc.Invoke(ctx, "/userprofile.UserProfile/GetAddresses", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userProfileClient) GetPhotos(ctx context.Context, in *wrappers.StringValue, opts ...grpc.CallOption) (*GetPhotosResponse, error) {
+	out := new(GetPhotosResponse)
+	err := c.cc.Invoke(ctx, "/userprofile.UserProfile/GetPhotos", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userProfileClient) UpdateContacts(ctx context.Context, in *wrappers.StringValue, opts ...grpc.CallOption) (*GetContactsResponse, error) {
+	out := new(GetContactsResponse)
+	err := c.cc.Invoke(ctx, "/userprofile.UserProfile/UpdateContacts", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userProfileClient) UpdateAddresses(ctx context.Context, in *Addresses, opts ...grpc.CallOption) (*GetAddressesResponse, error) {
+	out := new(GetAddressesResponse)
+	err := c.cc.Invoke(ctx, "/userprofile.UserProfile/UpdateAddresses", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userProfileClient) UpdatePhotos(ctx context.Context, in *Photos, opts ...grpc.CallOption) (*GetPhotosResponse, error) {
+	out := new(GetPhotosResponse)
+	err := c.cc.Invoke(ctx, "/userprofile.UserProfile/UpdatePhotos", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserProfileServer is the server API for UserProfile service.
 // All implementations must embed UnimplementedUserProfileServer
 // for forward compatibility
@@ -82,6 +161,30 @@ type UserProfileServer interface {
 	// input : GetUserRequest and JWT in metadata with key "JWT" {TODO: will be done after oauth service}
 	// output : GetUserResponse
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
+	// GetContacts : returns only contacts of a user
+	// input : Username
+	// output : GetContactsResponse
+	GetContacts(context.Context, *wrappers.StringValue) (*GetContactsResponse, error)
+	// GetAddresses : returns only Addresses of a user
+	// input : Username
+	// output : GetAddressesResponse
+	GetAddresses(context.Context, *wrappers.StringValue) (*GetAddressesResponse, error)
+	// GetPhotos : returns only Photos of a user
+	// input : Username
+	// output : GetPhotosResponse
+	GetPhotos(context.Context, *wrappers.StringValue) (*GetPhotosResponse, error)
+	// UpdateContacts : returns only contacts of a user
+	// input : UpdateContactsRequest
+	// output : UpdateContactsResponse
+	UpdateContacts(context.Context, *wrappers.StringValue) (*GetContactsResponse, error)
+	// UpdateAddresses : returns only Addresses of a user
+	// input : Addresses
+	// output : UpdateAddressesResponse
+	UpdateAddresses(context.Context, *Addresses) (*GetAddressesResponse, error)
+	// UpdatePhotos : returns only Photos of a user
+	// input : Photos
+	// output : UpdatePhotosResponse
+	UpdatePhotos(context.Context, *Photos) (*GetPhotosResponse, error)
 	mustEmbedUnimplementedUserProfileServer()
 }
 
@@ -97,6 +200,24 @@ func (UnimplementedUserProfileServer) CheckCred(context.Context, *CheckCredReque
 }
 func (UnimplementedUserProfileServer) GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
+}
+func (UnimplementedUserProfileServer) GetContacts(context.Context, *wrappers.StringValue) (*GetContactsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetContacts not implemented")
+}
+func (UnimplementedUserProfileServer) GetAddresses(context.Context, *wrappers.StringValue) (*GetAddressesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAddresses not implemented")
+}
+func (UnimplementedUserProfileServer) GetPhotos(context.Context, *wrappers.StringValue) (*GetPhotosResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPhotos not implemented")
+}
+func (UnimplementedUserProfileServer) UpdateContacts(context.Context, *wrappers.StringValue) (*GetContactsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateContacts not implemented")
+}
+func (UnimplementedUserProfileServer) UpdateAddresses(context.Context, *Addresses) (*GetAddressesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateAddresses not implemented")
+}
+func (UnimplementedUserProfileServer) UpdatePhotos(context.Context, *Photos) (*GetPhotosResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdatePhotos not implemented")
 }
 func (UnimplementedUserProfileServer) mustEmbedUnimplementedUserProfileServer() {}
 
@@ -165,6 +286,114 @@ func _UserProfile_GetUser_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserProfile_GetContacts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(wrappers.StringValue)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserProfileServer).GetContacts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/userprofile.UserProfile/GetContacts",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserProfileServer).GetContacts(ctx, req.(*wrappers.StringValue))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserProfile_GetAddresses_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(wrappers.StringValue)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserProfileServer).GetAddresses(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/userprofile.UserProfile/GetAddresses",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserProfileServer).GetAddresses(ctx, req.(*wrappers.StringValue))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserProfile_GetPhotos_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(wrappers.StringValue)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserProfileServer).GetPhotos(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/userprofile.UserProfile/GetPhotos",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserProfileServer).GetPhotos(ctx, req.(*wrappers.StringValue))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserProfile_UpdateContacts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(wrappers.StringValue)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserProfileServer).UpdateContacts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/userprofile.UserProfile/UpdateContacts",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserProfileServer).UpdateContacts(ctx, req.(*wrappers.StringValue))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserProfile_UpdateAddresses_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Addresses)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserProfileServer).UpdateAddresses(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/userprofile.UserProfile/UpdateAddresses",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserProfileServer).UpdateAddresses(ctx, req.(*Addresses))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserProfile_UpdatePhotos_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Photos)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserProfileServer).UpdatePhotos(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/userprofile.UserProfile/UpdatePhotos",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserProfileServer).UpdatePhotos(ctx, req.(*Photos))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserProfile_ServiceDesc is the grpc.ServiceDesc for UserProfile service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -183,6 +412,30 @@ var UserProfile_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUser",
 			Handler:    _UserProfile_GetUser_Handler,
+		},
+		{
+			MethodName: "GetContacts",
+			Handler:    _UserProfile_GetContacts_Handler,
+		},
+		{
+			MethodName: "GetAddresses",
+			Handler:    _UserProfile_GetAddresses_Handler,
+		},
+		{
+			MethodName: "GetPhotos",
+			Handler:    _UserProfile_GetPhotos_Handler,
+		},
+		{
+			MethodName: "UpdateContacts",
+			Handler:    _UserProfile_UpdateContacts_Handler,
+		},
+		{
+			MethodName: "UpdateAddresses",
+			Handler:    _UserProfile_UpdateAddresses_Handler,
+		},
+		{
+			MethodName: "UpdatePhotos",
+			Handler:    _UserProfile_UpdatePhotos_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
