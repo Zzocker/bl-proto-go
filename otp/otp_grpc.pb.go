@@ -17,7 +17,9 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OTPServicesClient interface {
-	SendOTP(ctx context.Context, in *GetOTPRequest, opts ...grpc.CallOption) (*GetOTPResponse, error)
+	// RequestOTP : will request server to send otp to their email id
+	RequestOTP(ctx context.Context, in *RequestOTPPRequest, opts ...grpc.CallOption) (*RequestOTPPResponse, error)
+	//  VerifyOTP : will verify otp with the server
 	VerifyOTP(ctx context.Context, in *VerifyOTPRequest, opts ...grpc.CallOption) (*VerifyOTPResponse, error)
 }
 
@@ -29,9 +31,9 @@ func NewOTPServicesClient(cc grpc.ClientConnInterface) OTPServicesClient {
 	return &oTPServicesClient{cc}
 }
 
-func (c *oTPServicesClient) SendOTP(ctx context.Context, in *GetOTPRequest, opts ...grpc.CallOption) (*GetOTPResponse, error) {
-	out := new(GetOTPResponse)
-	err := c.cc.Invoke(ctx, "/otp.OTPServices/SendOTP", in, out, opts...)
+func (c *oTPServicesClient) RequestOTP(ctx context.Context, in *RequestOTPPRequest, opts ...grpc.CallOption) (*RequestOTPPResponse, error) {
+	out := new(RequestOTPPResponse)
+	err := c.cc.Invoke(ctx, "/otp.OTPServices/RequestOTP", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +53,9 @@ func (c *oTPServicesClient) VerifyOTP(ctx context.Context, in *VerifyOTPRequest,
 // All implementations must embed UnimplementedOTPServicesServer
 // for forward compatibility
 type OTPServicesServer interface {
-	SendOTP(context.Context, *GetOTPRequest) (*GetOTPResponse, error)
+	// RequestOTP : will request server to send otp to their email id
+	RequestOTP(context.Context, *RequestOTPPRequest) (*RequestOTPPResponse, error)
+	//  VerifyOTP : will verify otp with the server
 	VerifyOTP(context.Context, *VerifyOTPRequest) (*VerifyOTPResponse, error)
 	mustEmbedUnimplementedOTPServicesServer()
 }
@@ -60,8 +64,8 @@ type OTPServicesServer interface {
 type UnimplementedOTPServicesServer struct {
 }
 
-func (UnimplementedOTPServicesServer) SendOTP(context.Context, *GetOTPRequest) (*GetOTPResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SendOTP not implemented")
+func (UnimplementedOTPServicesServer) RequestOTP(context.Context, *RequestOTPPRequest) (*RequestOTPPResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RequestOTP not implemented")
 }
 func (UnimplementedOTPServicesServer) VerifyOTP(context.Context, *VerifyOTPRequest) (*VerifyOTPResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method VerifyOTP not implemented")
@@ -79,20 +83,20 @@ func RegisterOTPServicesServer(s grpc.ServiceRegistrar, srv OTPServicesServer) {
 	s.RegisterService(&OTPServices_ServiceDesc, srv)
 }
 
-func _OTPServices_SendOTP_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetOTPRequest)
+func _OTPServices_RequestOTP_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestOTPPRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OTPServicesServer).SendOTP(ctx, in)
+		return srv.(OTPServicesServer).RequestOTP(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/otp.OTPServices/SendOTP",
+		FullMethod: "/otp.OTPServices/RequestOTP",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OTPServicesServer).SendOTP(ctx, req.(*GetOTPRequest))
+		return srv.(OTPServicesServer).RequestOTP(ctx, req.(*RequestOTPPRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -123,8 +127,8 @@ var OTPServices_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*OTPServicesServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "SendOTP",
-			Handler:    _OTPServices_SendOTP_Handler,
+			MethodName: "RequestOTP",
+			Handler:    _OTPServices_RequestOTP_Handler,
 		},
 		{
 			MethodName: "VerifyOTP",
